@@ -216,6 +216,7 @@ def notifNotes():
                        ' en ' + grade.subject.name + ' sur ' + grade.comment + '\nMoyenne générale : ' + period.overall_average)
                 notes.append(id)
         line.notes = json.dumps(notes)
+        session.commit()
 
 
 def todo():
@@ -244,6 +245,7 @@ def todo():
                 title=f'{homework.subject.name} {homework.description[0:100]}', list_id=task_list.list_id, due_date=homework.date, body_text=homework.description)
             devoirs.append(id)
     line.devoirs = json.dumps(devoirs)
+    session.commit()
 
 
 def sched():
