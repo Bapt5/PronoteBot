@@ -62,7 +62,7 @@ def notify(title, body):
                          headers={'Authorization': 'Bearer ' + tokenPushBullet,
                                   'Content-Type': 'application/json'})
     if resp.status_code != 200:
-        raise Exception('Error', resp.status_code)
+        print('Error', resp.status_code)
 
 
 def coursToAgenda():
