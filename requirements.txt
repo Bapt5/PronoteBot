@@ -1,0 +1,8 @@
+pronotepy
+google-api-python-client
+google_auth_oauthlib
+requests
+apscheduler
+pymstodo
+sqlalchemy
+psycopg2
