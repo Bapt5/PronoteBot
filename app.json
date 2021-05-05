@@ -1,0 +1,34 @@
+{
+  "name": "PronoteBot",
+  "description": "A bot which can do many things with Pronote Easily deployable on Heroku",
+  "repository": "https://github.com/Bapt5/PronoteBot",
+  "logo": "https://0910626l.index-education.net/pronote/images/favicon.svg",
+  "keywords": ["pronote", "pronote-api", "google-calendar-api", "microsoft-todo", "pymstodo", "pronotepy"],
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [{
+    "url": "heroku/python"
+  }],
+  "env": {
+    "USERNAME_ENT": {
+      "description": "Your ENT username (It's work only for ile de france If you are not from ile de france Please contact me)"
+    },
+    "PASSWORD_ENT": {
+      "description": "Your ENT password (It's work only for ile de france If you are not from ile de france Please contact me)"
+    },
+    "CALENDAR_ID": {
+      "description": "Your google calendar id By default it is your google email address"
+    },
+    "NAME_MICROSOFT_TODO_LIST": {
+      "description": "The name of your Microsoft ToDo list where you want homework to be put. If the ToDo list doesn't exist it will be create. "
+    },
+    "TOKEN_PUSHBULLET": {
+      "description": "Your pushbullet token to receive a notification when you have a new grade"
+    },
+    "COLORS": {
+      "description": "A JSON to configure the correspondence between the colors of Pronote and the colors of Google",
+      "value": "{\"#F2ED82\": 2, \"#FD0222\": 11, \"#AFDEF9\": 7, \"#7CB927\": 10, \"#ED679B\": 3, \"#6ACAF2\": 9, \"#212853\": 6, \"#C0C0C0\": 8, \"#FFFF00\": 5, \"#A49E6C\": 4, \"#144897\": 1}"
+    }
+  }
+}

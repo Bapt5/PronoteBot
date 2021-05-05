@@ -231,10 +231,13 @@ def todo():
         devoirs = []
     # récupère la liste todo dans laquelle il faut mettre les devoirs
     lists = todo_client.get_lists()
+    task_list = None
     for list in lists:
         if list.displayName == listeToDo:
             task_list = list
             break
+    if task_list == None:
+        todo_client.create_list(name=listeToDo)
     homeworks = client.homework(
         date.today(), date.today() + timedelta(days=30))
     for homework in homeworks:
