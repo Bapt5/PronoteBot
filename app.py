@@ -222,7 +222,6 @@ def notifNotes():
 def todo():
     # met les devoirs dans ToDo
     connectTodo()
-    connectPronote()
     # charge le fichier avec les devoirs deja ajouté
     lineDev = session.query(Config).one()
     if lineDev.devoirs != None:
@@ -250,6 +249,7 @@ def todo():
             todo_client.create_task(
                 title=f'{homework.subject.name} {homework.description[0:100]}', list_id=task_list.list_id, due_date=homework.date, body_text=homework.description)
             devoirs.append(id)
+        # Si il est fait on le coche sur todo
         else:
             tasks = todo_client.get_tasks(
                 list_id=task_list.list_id, status='notCompleted')
@@ -258,8 +258,10 @@ def todo():
                     todo_client.complete_task(
                         task_id=task.task_id, list_id=task_list.list_id)
                     break
+    # récupére tous les devoirs fait
     tasks = todo_client.get_tasks(
         list_id=task_list.list_id, status='completed')
+    # on coche le devoirs sur pronote
     for task in tasks:
         homeworks = client.homework(
             date.today(), date.today() + timedelta(days=30))
@@ -275,6 +277,7 @@ def sched():
     connectPronote()
     verifAgenda()
     notifNotes()
+    todo()
 
 
 # true si le script n'est pas executé depuis un autre
@@ -290,7 +293,6 @@ if __name__ == "__main__":
     todo_client = pickle.loads(codecs.decode(
         line.token_todo.encode(), "base64"))
 
-    todo()
     sched()
     scheduler = BackgroundScheduler()
     scheduler.add_job(coursToAgenda, 'cron',
