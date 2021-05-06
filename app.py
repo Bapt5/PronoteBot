@@ -238,15 +238,35 @@ def todo():
             break
     if task_list == None:
         todo_client.create_list(name=listeToDo)
+    # récupére tous les devoirs pour les 30 prochains jours
     homeworks = client.homework(
         date.today(), date.today() + timedelta(days=30))
     for homework in homeworks:
+        # création de l'id
         id = homework.description[0:10] + \
             homework.date.strftime("%Y-%m-%dT%H:%M:%S")
+        # si le devoir n'est pas fini est qu'il n'est pas encore dans todo on l'ajoute
         if homework.done == False and id not in devoirs:
             todo_client.create_task(
                 title=f'{homework.subject.name} {homework.description[0:100]}', list_id=task_list.list_id, due_date=homework.date, body_text=homework.description)
             devoirs.append(id)
+        else:
+            tasks = todo_client.get_tasks(
+                list_id=task_list.list_id, status='notCompleted')
+            for task in tasks:
+                if task.dueDateTime == homework.date and task.body == homework.description:
+                    todo_client.complete_task(
+                        task_id=task.task_id, list_id=task_list.list_id)
+                    break
+    tasks = todo_client.get_tasks(
+        list_id=task_list.list_id, status='completed')
+    for task in tasks:
+        homeworks = client.homework(
+            date.today(), date.today() + timedelta(days=30))
+        for homework in homeworks:
+            if task.dueDateTime == homework.date and task.body == homework.description:
+                homework.set_done(status=True)
+
     line.devoirs = json.dumps(devoirs)
     session.commit()
 
@@ -270,7 +290,7 @@ if __name__ == "__main__":
     todo_client = pickle.loads(codecs.decode(
         line.token_todo.encode(), "base64"))
 
-    # todo()
+    todo()
     sched()
     scheduler = BackgroundScheduler()
     scheduler.add_job(coursToAgenda, 'cron',
