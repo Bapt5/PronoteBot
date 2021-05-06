@@ -10,6 +10,12 @@
   "buildpacks": [{
     "url": "heroku/python"
   }],
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
   "env": {
     "USERNAME_ENT": {
       "description": "Your ENT username (It's work only for ile de france If you are not from ile de france Please contact me)"

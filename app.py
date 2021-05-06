@@ -283,7 +283,7 @@ def sched():
 # true si le script n'est pas executé depuis un autre
 if __name__ == "__main__":
     while session.query(Config).count() == 0:
-        print('Please do the configuration with "python config.py"')
+        print('Please do the configuration with "python config.py" More information on https://github.com/Bapt5/PronoteBot#readme')
         time.sleep(60)
 
     line = session.query(Config).one()

@@ -27,6 +27,4 @@ A bot which can do many things with Pronote Easily deployable on Heroku
 ![configpy](./images/configpy.png)
 * Then **follow the instructions** of the script\
 ⚠Pay attention in the second step you will be redirected to a page that says "This site is inaccessible" You must **copy the link** and **paste** it in the console⚠
-* Go to **resources page** click on the **pen** **enable the app** with the **slider** and then click on **confirm**\
-![configpy](./images/active.png)
 * Your app **is configure** To see the log **click on more** and **view logs**
