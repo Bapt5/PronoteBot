@@ -59,3 +59,4 @@ if __name__ == '__main__':
         line.token_google = tokenGoogle
         line.token_todo = tokenToDo
         session.commit()
+    print('End of configuration')
