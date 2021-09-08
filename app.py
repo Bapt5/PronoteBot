@@ -73,24 +73,27 @@ def coursToAgenda():
     if client.logged_in:
         for i in range(1, 7):
             cours = client.lessons(date.today() + timedelta(days=i))
-            for i in cours:
+            for cour in cours:
                 # verifie si le prof n' est pas absent ou si le cours n'est pas annulé
-                if (i.canceled != True and i.exempted != True) or len(i.virtual_classrooms) == 1:
-                    start_time = i.start
-                    end_time = i.end
+                if (cour.canceled != True and cour.exempted != True) or len(cour.virtual_classrooms) == 1:
+                    start_time = cour.start
+                    end_time = cour.end
                     timezone = 'Europe/Paris'
-                    cours = i.subject.name
-                    prof = i.teacher_name
-                    if len(i.virtual_classrooms) == 1:
-                        salle = i.virtual_classrooms[0]
+                    cours = cour.subject.name
+                    prof = cour.teacher_name
+                    if len(cour.virtual_classrooms) == 1:
+                        salle = cour.virtual_classrooms[0]
                     else:
-                        salle = i.classroom
-                    if i.background_color in colors:
-                        couleur = colors[i.background_color]
+                        if cour.classroom:
+                            salle = cour.classroom
+                        else:
+                            salle = ''
+                    if cour.background_color in colors:
+                        couleur = colors[cour.background_color]
                     else:
                         couleur = '0'
-                    id = i.teacher_name[0:3] + i.subject.name[0:4] + \
-                        i.classroom[0:3] + \
+                    id = cour.teacher_name[0:3] + cour.subject.name[0:4] + \
+                        salle[0:3] + \
                         start_time.strftime("%Y-%m-%dT%H:%M:%S")
 
                     event = {
@@ -120,7 +123,7 @@ def coursToAgenda():
                 # envoi une notification sinon
                 else:
                     notify(
-                        'Cours annulé', f'Le cours de {i.subject.name} est annulé {jourSemaine[i.start.weekday()]} {i.start.day}/{i.start.month}')
+                        'Cours annulé', f'Le cours de {cour.subject.name} est annulé {jourSemaine[cour.start.weekday()]} {cour.start.day}/{cour.start.month}')
     else:
         print('no login')
 
@@ -132,18 +135,21 @@ def verifAgenda():
     if client.logged_in:
         for i in range(0, 3):
             cours = client.lessons(date.today() + timedelta(days=i))
-            for i in cours:
-                start_time = i.start
-                cours = i.subject.name
-                prof = i.teacher_name
-                if len(i.virtual_classrooms) == 1:
-                    salle = i.virtual_classrooms[0]
+            for cour in cours:
+                start_time = cour.start
+                cours = cour.subject.name
+                prof = cour.teacher_name
+                if len(cour.virtual_classrooms) == 1:
+                    salle = cour.virtual_classrooms[0]
                 else:
-                    salle = i.classroom
-                id = i.teacher_name[0:3] + i.subject.name[0:4] + \
-                    i.classroom[0:3] + start_time.strftime("%Y-%m-%dT%H:%M:%S")
+                    if cour.classroom:
+                        salle = cour.classroom
+                    else:
+                        salle = ''
+                id = cour.teacher_name[0:3] + cour.subject.name[0:4] + \
+                    salle[0:3] + start_time.strftime("%Y-%m-%dT%H:%M:%S")
                 # verifie si le prof est absent ou si le cours est annulé
-                if (i.canceled == True or i.exempted == True) and len(i.virtual_classrooms) == 0:
+                if (cour.canceled == True or cour.exempted == True) and len(cour.virtual_classrooms) == 0:
                     event = service.events().list(calendarId=calendar_id,
                                                   iCalUID=id).execute()
                     # verifie si l'evenement existe
@@ -152,16 +158,16 @@ def verifAgenda():
                         service.events().delete(calendarId=calendar_id,
                                                 eventId=event['items'][0]['id']).execute()
                         notify(
-                            'Cours annulé', f'Le cours de {i.subject.name} est annulé {jourSemaine[start_time.weekday()]}')
+                            'Cours annulé', f'Le cours de {cour.subject.name} est annulé {jourSemaine[start_time.weekday()]}')
                 else:
                     event = service.events().list(calendarId=calendar_id,
                                                   iCalUID=id).execute()
                     # verifie si l'evenement n'existe pas
                     if len(event['items']) == 0:
-                        end_time = i.end
+                        end_time = cour.end
                         timezone = 'Europe/Paris'
-                        if i.background_color in colors:
-                            couleur = colors[i.background_color]
+                        if cour.background_color in colors:
+                            couleur = colors[cour.background_color]
                         else:
                             couleur = '0'
                         event = {
