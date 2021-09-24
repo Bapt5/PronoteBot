@@ -28,16 +28,24 @@
     },
     "ENT": {
       "description": "Your ENT Please check the Readme",
-      "value": ""
+      "value": "",
+      "required": "false"
     },
     "CALENDAR_ID": {
-      "description": "Your google calendar id By default it is your google email address"
+      "description": "Your google calendar id By default it is your google email address",
+      "value": "",
+      "required": "false"
+
     },
     "NAME_MICROSOFT_TODO_LIST": {
-      "description": "The name of your Microsoft ToDo list where you want homework to be put. If the ToDo list doesn't exist it will be create. "
+      "description": "The name of your Microsoft ToDo list where you want homework to be put. If the ToDo list doesn't exist it will be create. ",
+      "value": "",
+      "required": "false"
     },
     "TOKEN_PUSHBULLET": {
-      "description": "Your pushbullet token to receive a notification when you have a new grade"
+      "description": "Your pushbullet token to receive a notification when you have a new grade",
+      "value": "",
+      "required": "false"
     },
     "COLORS": {
       "description": "A JSON to configure the correspondence between the colors of Pronote and the colors of Google",

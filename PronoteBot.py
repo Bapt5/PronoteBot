@@ -65,12 +65,14 @@ class PronoteBot:
         self.todo()
 
     def connectGoogle(self):
-        # connexion à l'api Google Calendar
-        self.service = build("calendar", "v3", credentials=self.credentialsGoogle)
+        if self.credentialsGoogle and self.calendar_id:
+            # connexion à l'api Google Calendar
+            self.service = build("calendar", "v3", credentials=self.credentialsGoogle)
 
     def connectTodo(self):
-        # connexion à l'api ToDo
-        self.todo_client._refresh_token()
+        if self.todo_client and self.listeToDo:
+            # connexion à l'api ToDo
+            self.todo_client._refresh_token()
 
     def notify(self, title, body):
         if self.tokenPushBullet:
@@ -90,7 +92,7 @@ class PronoteBot:
         self.client.session_check()
         self.connectGoogle()
         # verifie si le client est connecté
-        if self.client.logged_in:
+        if self.client.logged_in and self.credentialsGoogle and self.calendar_id:
             for i in range(1, 7):
                 cours = self.client.lessons(date.today() + timedelta(days=i))
                 for cour in cours:
@@ -151,7 +153,7 @@ class PronoteBot:
         # récupère les cours sur Pronote et créé un event sur Google Calendar
         self.connectGoogle()
         # verifie si le client est connecté
-        if self.client.logged_in:
+        if self.client.logged_in and self.credentialsGoogle and self.calendar_id:
             for i in range(0, 3):
                 cours = self.client.lessons(date.today() + timedelta(days=i))
                 for cour in cours:
@@ -227,7 +229,7 @@ class PronoteBot:
             notes = json.loads(lineNot.notes)
         else:
             notes = []
-        if self.client.logged_in:
+        if self.client.logged_in and self.tokenPushBullet:
             # récupère les notes
             period = self.client.current_period
             for grade in period.grades:
@@ -251,46 +253,47 @@ class PronoteBot:
             devoirs = json.loads(lineDev.devoirs)
         else:
             devoirs = []
-        # récupère la liste todo dans laquelle il faut mettre les devoirs
-        lists = self.todo_client.get_lists()
-        task_list = None
-        for list in lists:
-            if list.displayName == self.listeToDo:
-                task_list = list
-                break
-        if task_list == None:
-            self.todo_client.create_list(name=self.listeToDo)
-        # récupére tous les devoirs pour les 30 prochains jours
-        homeworks = self.client.homework(
-            date.today(), date.today() + timedelta(days=30))
-        for homework in homeworks:
-            # création de l'id
-            id = homework.description[0:10] + \
-                homework.date.strftime("%Y-%m-%dT%H:%M:%S")
-            # si le devoir n'est pas fini est qu'il n'est pas encore dans todo on l'ajoute
-            if homework.done == False and id not in devoirs:
-                self.todo_client.create_task(
-                    title=f'{homework.subject.name[0:5]} {homework.description[0:100]}', list_id=task_list.list_id, due_date=homework.date, body_text=homework.description)
-                devoirs.append(id)
-            # Si il est fait on le coche sur todo
-            else:
-                tasks = self.todo_client.get_tasks(
-                    list_id=task_list.list_id, status='notCompleted')
-                for task in tasks:
-                    if task.dueDateTime == homework.date and task.body == homework.description:
-                        self.todo_client.complete_task(
-                            task_id=task.task_id, list_id=task_list.list_id)
-                        break
-        # récupére tous les devoirs fait
-        tasks = self.todo_client.get_tasks(
-            list_id=task_list.list_id, status='completed')
-        # on coche le devoirs sur pronote
-        for task in tasks:
+        if self.client.logged_in and self.todo_client and self.listeToDo:
+            # récupère la liste todo dans laquelle il faut mettre les devoirs
+            lists = self.todo_client.get_lists()
+            task_list = None
+            for list in lists:
+                if list.displayName == self.listeToDo:
+                    task_list = list
+                    break
+            if task_list == None:
+                self.todo_client.create_list(name=self.listeToDo)
+            # récupére tous les devoirs pour les 30 prochains jours
             homeworks = self.client.homework(
                 date.today(), date.today() + timedelta(days=30))
             for homework in homeworks:
-                if task.dueDateTime == homework.date and task.body == homework.description:
-                    homework.set_done(status=True)
+                # création de l'id
+                id = homework.description[0:10] + \
+                    homework.date.strftime("%Y-%m-%dT%H:%M:%S")
+                # si le devoir n'est pas fini est qu'il n'est pas encore dans todo on l'ajoute
+                if homework.done == False and id not in devoirs:
+                    self.todo_client.create_task(
+                        title=f'{homework.subject.name[0:5]} {homework.description[0:100]}', list_id=task_list.list_id, due_date=homework.date, body_text=homework.description)
+                    devoirs.append(id)
+                # Si il est fait on le coche sur todo
+                else:
+                    tasks = self.todo_client.get_tasks(
+                        list_id=task_list.list_id, status='notCompleted')
+                    for task in tasks:
+                        if task.dueDateTime == homework.date and task.body == homework.description:
+                            self.todo_client.complete_task(
+                                task_id=task.task_id, list_id=task_list.list_id)
+                            break
+            # récupére tous les devoirs fait
+            tasks = self.todo_client.get_tasks(
+                list_id=task_list.list_id, status='completed')
+            # on coche le devoirs sur pronote
+            for task in tasks:
+                homeworks = self.client.homework(
+                    date.today(), date.today() + timedelta(days=30))
+                for homework in homeworks:
+                    if task.dueDateTime == homework.date and task.body == homework.description:
+                        homework.set_done(status=True)
 
-        self.line.devoirs = json.dumps(devoirs)
-        session.commit()
+            self.line.devoirs = json.dumps(devoirs)
+            session.commit()
