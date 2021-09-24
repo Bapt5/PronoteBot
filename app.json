@@ -17,11 +17,18 @@
     }
   },
   "env": {
-    "USERNAME_ENT": {
-      "description": "Your ENT username (It's work only for ile de france If you are not from ile de france Please contact me)"
+    "URL_PRONOTE": {
+      "description": "The url where you are redirect when you go on Pronote"
     },
-    "PASSWORD_ENT": {
-      "description": "Your ENT password (It's work only for ile de france If you are not from ile de france Please contact me)"
+    "USERNAME_PRONOTE": {
+      "description": "Your Pronote or ENT username"
+    },
+    "PASSWORD_PRONOTE": {
+      "description": "Your Pronote or ENT password"
+    },
+    "ENT": {
+      "description": "Your ENT Please check the Readme",
+      "value": ""
     },
     "CALENDAR_ID": {
       "description": "Your google calendar id By default it is your google email address"
