@@ -31,9 +31,13 @@ base.metadata.create_all(db)
 
 if __name__ == '__main__':
     scopes = ['https://www.googleapis.com/auth/calendar']
-    flow = InstalledAppFlow.from_client_secrets_file(
-        "credentials.json", scopes=scopes)
-    credentials = flow.run_console()
+    try:
+        flow = InstalledAppFlow.from_client_secrets_file(
+            "credentials.json", scopes=scopes)
+        credentials = flow.run_console()
+    except ValueError:
+        credentials = None
+        print("VALUE ERROR -> You don't want to use Google Calendar")
     tokenGoogle = codecs.encode(pickle.dumps(credentials), "base64").decode()
 
     # identifiant de connexion à l'app
@@ -43,10 +47,14 @@ if __name__ == '__main__':
     auth_url = ToDoConnection.get_auth_url(client_id)
     redirect_resp = input(
         f'Go to this link do all the steps:\n{auth_url}\n\nPaste the redirect link here\n')
-    token = ToDoConnection.get_token(
-        client_id, client_secret, redirect_resp)
-    todo_client = ToDoConnection(
-        client_id=client_id, client_secret=client_secret, token=token)
+    try:
+        token = ToDoConnection.get_token(
+            client_id, client_secret, redirect_resp)
+        todo_client = ToDoConnection(
+            client_id=client_id, client_secret=client_secret, token=token)
+    except ValueError:
+        todo_client = None
+        print("VALUE ERROR -> You don't want to use Microsoft ToDo")
     tokenToDo = codecs.encode(pickle.dumps(todo_client), "base64").decode()
 
     if session.query(Config).count() == 0:
