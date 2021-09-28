@@ -178,7 +178,7 @@ class PronoteBot:
                             # supprime l'evenement
                             self.service.events().delete(calendarId=self.calendar_id,
                                                     eventId=event['items'][0]['id']).execute()
-                            notify(
+                            self.notify(
                                 'Cours annulé', f'Le cours de {cour.subject.name} est annulé {jourSemaine[start_time.weekday()]}')
                     else:
                         event = self.service.events().list(calendarId=self.calendar_id,
@@ -238,7 +238,7 @@ class PronoteBot:
                     str(grade.date.day) + str(grade.date.month)
                 # verifie si une notification n'a pas déjà été envoyer pour cette note
                 if id not in notes:
-                    notify(grade.subject.name + ' : ' + f'{grade.grade}/{grade.out_of}', 'Tu as eu ' + f'{grade.grade}/{grade.out_of}' +
+                    self.notify(grade.subject.name + ' : ' + f'{grade.grade}/{grade.out_of}', 'Tu as eu ' + f'{grade.grade}/{grade.out_of}' +
                            ' en ' + grade.subject.name + ' sur ' + grade.comment + '\nMoyenne générale : ' + period.overall_average)
                     notes.append(id)
             self.line.notes = json.dumps(notes)
