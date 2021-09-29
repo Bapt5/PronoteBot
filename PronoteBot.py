@@ -291,7 +291,7 @@ class PronoteBot:
                 # si le devoir n'est pas fini est qu'il n'est pas encore dans todo on l'ajoute
                 if homework.done == False and id not in devoirs:
                     self.todo_client.create_task(
-                        title=f'{homework.subject.name[0:5]} {homework.description[0:100]}', list_id=task_list.list_id, due_date=homework.date, body_text=homework.description)
+                        title=f'{homework.subject.name[0:5]} {homework.description[0:100]}', list_id=task_list.list_id, due_date=homework.date, body_text=f'{homework.subject.name} : {homework.description}')
                     devoirs.append(id)
                 # Si il est fait on le coche sur todo
                 else:
