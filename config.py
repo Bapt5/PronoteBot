@@ -4,10 +4,13 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from google_auth_oauthlib.flow import InstalledAppFlow
 from pymstodo import ToDoConnection
+from dotenv import load_dotenv
 import os
 import codecs
 import pickle
 
+if os.path.exists('.env'):
+    load_dotenv()
 
 url = os.environ['DATABASE_URL'].replace('postgres', 'postgresql')
 
