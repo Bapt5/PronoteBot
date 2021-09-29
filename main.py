@@ -15,8 +15,7 @@ if __name__ == "__main__":
             os.environ.get('ENT'),
             os.environ.get('TOKEN_PUSHBULLET'),
             os.environ.get('CALENDAR_ID'),
-            os.environ.get('NAME_MICROSOFT_TODO_LIST'),
-            os.environ.get('COLORS', '{"#F2ED82": 2, "#FD0222": 11, "#AFDEF9": 7, "#7CB927": 10, "#ED679B": 3, "#6ACAF2": 9, "#212853": 6, "#C0C0C0": 8, "#FFFF00": 5, "#A49E6C": 4, "#144897": 1}')
+            os.environ.get('NAME_MICROSOFT_TODO_LIST')
             )
     bot.run()
     # permet de garder l'application ouverte en permanence

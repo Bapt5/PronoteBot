@@ -46,10 +46,6 @@
       "description": "Your pushbullet token to receive a notification when you have a new grade",
       "value": "",
       "required": "false"
-    },
-    "COLORS": {
-      "description": "A JSON to configure the correspondence between the colors of Pronote and the colors of Google",
-      "value": "{\"#F2ED82\": 2, \"#FD0222\": 11, \"#AFDEF9\": 7, \"#7CB927\": 10, \"#ED679B\": 3, \"#6ACAF2\": 9, \"#212853\": 6, \"#C0C0C0\": 8, \"#FFFF00\": 5, \"#A49E6C\": 4, \"#144897\": 1}"
     }
   }
 }

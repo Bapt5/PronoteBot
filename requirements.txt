@@ -6,3 +6,5 @@ apscheduler
 pymstodo
 sqlalchemy
 psycopg2
+scikit-image
+Pillow

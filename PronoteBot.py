@@ -1,6 +1,9 @@
 import pronotepy
 from apiclient.discovery import build
 from apscheduler.schedulers.background import BackgroundScheduler
+from PIL.ImageColor import getrgb
+from skimage import color as cl
+from math import sqrt
 from config import session, Config
 from ENTs import ents
 from datetime import *
@@ -15,14 +18,13 @@ jourSemaine = ("Lundi", "Mardi", "Mercredi", "Jeudi",
 
 class PronoteBot:
     def __init__(self,
-            urlPronote,
-            usernamePronote,
-            mdpPronote,
-            ent,
-            tokenPushBullet,
-            calendar_id,
-            listeToDo,
-            colors={"#F2ED82": 2, "#FD0222": 11, "#AFDEF9": 7, "#7CB927": 10, "#ED679B": 3, "#6ACAF2": 9, "#212853": 6, "#C0C0C0": 8, "#FFFF00": 5, "#A49E6C": 4, "#144897": 1}):
+                 urlPronote,
+                 usernamePronote,
+                 mdpPronote,
+                 ent,
+                 tokenPushBullet,
+                 calendar_id,
+                 listeToDo):
         # déclaration des variables globales
         self.urlPronote = urlPronote
         self.usernamePronote = usernamePronote
@@ -31,7 +33,6 @@ class PronoteBot:
         self.tokenPushBullet = tokenPushBullet
         self.calendar_id = calendar_id
         self.listeToDo = listeToDo
-        self.colors = json.loads(colors) if type(colors) == str else colors
 
         self.credentialsGoogle = None
         self.service = None
@@ -87,6 +88,29 @@ class PronoteBot:
         else:
             print("You don't want to use Pushbullet for notifications")
 
+    @staticmethod
+    def convertColor(color):
+        color = cl.rgb2lab(getrgb(color))
+        colorIds = {
+        '#7986cb': 1,
+        '#33b679': 2,
+        '#8e24aa': 3,
+        '#e67c73': 4,
+        '#f6c026': 5,
+        '#f5511d': 6,
+        '#039be5': 7,
+        '#616161': 8,
+        '#3f51b5': 9,
+        '#0b8043': 10,
+        '#d60000': 11
+        }
+        distances = []
+        for colorId, id in colorIds.items():
+            colorIdLab = cl.rgb2lab(getrgb(colorId))
+            distances.append((sqrt((color[0] - colorIdLab[0])**2 + (
+                color[1] - colorIdLab[1]) ** 2 + (color[2] - colorIdLab[2])**2), id))
+        return min(distances)[1]
+
     def coursToAgenda(self):
         # récupère les cours sur Pronote et créé un event sur Google Calendar
         self.client.session_check()
@@ -110,10 +134,6 @@ class PronoteBot:
                                 salle = cour.classroom
                             else:
                                 salle = ''
-                        if cour.background_color in self.colors:
-                            couleur = self.colors[cour.background_color]
-                        else:
-                            couleur = '0'
                         id = cour.teacher_name[0:3] + cour.subject.name[0:4] + \
                             salle[0:3] + \
                             start_time.strftime("%Y-%m-%dT%H:%M:%S")
@@ -134,7 +154,7 @@ class PronoteBot:
                             'reminders': {
                                 'useDefault': True,
                             },
-                            'colorId': couleur
+                            'colorId': self.convertColor(cour.background_color)
                         }
                         try:
                             # creer l'evenement
@@ -187,10 +207,6 @@ class PronoteBot:
                         if len(event['items']) == 0:
                             end_time = cour.end
                             timezone = 'Europe/Paris'
-                            if cour.background_color in self.colors:
-                                couleur = self.colors[cour.background_color]
-                            else:
-                                couleur = '0'
                             event = {
                                 'summary': cours,
                                 'location': salle,
@@ -210,7 +226,7 @@ class PronoteBot:
                                         {'method': 'popup', 'minutes': 10},
                                     ],
                                 },
-                                'colorId': couleur
+                                'colorId': self.convertColor(cour.background_color)
                             }
                             try:
                                 # créé l'evenement
