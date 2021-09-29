@@ -9,14 +9,14 @@ if __name__ == "__main__":
         time.sleep(60)
 
     bot = PronoteBot(
-            os.environ.get('URL_PRONOTE'),
-            os.environ.get('USERNAME_PRONOTE'),
-            os.environ.get('PASSWORD_PRONOTE'),
-            os.environ.get('ENT'),
-            os.environ.get('TOKEN_PUSHBULLET'),
-            os.environ.get('CALENDAR_ID'),
-            os.environ.get('NAME_MICROSOFT_TODO_LIST')
-            )
+        os.environ.get('URL_PRONOTE'),
+        os.environ.get('USERNAME_PRONOTE'),
+        os.environ.get('PASSWORD_PRONOTE'),
+        os.environ.get('ENT'),
+        os.environ.get('TOKEN_PUSHBULLET'),
+        os.environ.get('CALENDAR_ID'),
+        os.environ.get('NAME_MICROSOFT_TODO_LIST')
+    )
     bot.run()
     # permet de garder l'application ouverte en permanence
     try:

@@ -16,6 +16,7 @@ import codecs
 jourSemaine = ("Lundi", "Mardi", "Mercredi", "Jeudi",
                "Vendredi", "Samedi", "Dimanche")
 
+
 class PronoteBot:
     def __init__(self,
                  urlPronote,
@@ -48,9 +49,9 @@ class PronoteBot:
             self.line.token_todo.encode(), "base64"))
 
         self.client = pronotepy.Client(self.urlPronote,
-                                  username=self.usernamePronote,
-                                  password=self.mdpPronote,
-                                  ent=self.ent)
+                                       username=self.usernamePronote,
+                                       password=self.mdpPronote,
+                                       ent=self.ent)
         self.sched()
         scheduler = BackgroundScheduler()
         scheduler.add_job(self.coursToAgenda, 'cron',
@@ -68,7 +69,8 @@ class PronoteBot:
     def connectGoogle(self):
         if self.credentialsGoogle and self.calendar_id:
             # connexion à l'api Google Calendar
-            self.service = build("calendar", "v3", credentials=self.credentialsGoogle)
+            self.service = build(
+                "calendar", "v3", credentials=self.credentialsGoogle)
 
     def connectTodo(self):
         if self.todo_client and self.listeToDo:
@@ -92,17 +94,17 @@ class PronoteBot:
     def convertColor(color):
         color = cl.rgb2lab(getrgb(color))
         colorIds = {
-        '#7986cb': 1,
-        '#33b679': 2,
-        '#8e24aa': 3,
-        '#e67c73': 4,
-        '#f6c026': 5,
-        '#f5511d': 6,
-        '#039be5': 7,
-        '#616161': 8,
-        '#3f51b5': 9,
-        '#0b8043': 10,
-        '#d60000': 11
+            '#7986cb': 1,
+            '#33b679': 2,
+            '#8e24aa': 3,
+            '#e67c73': 4,
+            '#f6c026': 5,
+            '#f5511d': 6,
+            '#039be5': 7,
+            '#616161': 8,
+            '#3f51b5': 9,
+            '#0b8043': 10,
+            '#d60000': 11
         }
         distances = []
         for colorId, id in colorIds.items():
@@ -192,17 +194,17 @@ class PronoteBot:
                     # verifie si le prof est absent ou si le cours est annulé
                     if (cour.canceled == True or cour.exempted == True) and len(cour.virtual_classrooms) == 0:
                         event = self.service.events().list(calendarId=self.calendar_id,
-                                                      iCalUID=id).execute()
+                                                           iCalUID=id).execute()
                         # verifie si l'evenement existe
                         if len(event['items']) == 1:
                             # supprime l'evenement
                             self.service.events().delete(calendarId=self.calendar_id,
-                                                    eventId=event['items'][0]['id']).execute()
+                                                         eventId=event['items'][0]['id']).execute()
                             self.notify(
                                 'Cours annulé', f'Le cours de {cour.subject.name} est annulé {jourSemaine[start_time.weekday()]}')
                     else:
                         event = self.service.events().list(calendarId=self.calendar_id,
-                                                      iCalUID=id).execute()
+                                                           iCalUID=id).execute()
                         # verifie si l'evenement n'existe pas
                         if len(event['items']) == 0:
                             end_time = cour.end
@@ -255,7 +257,7 @@ class PronoteBot:
                 # verifie si une notification n'a pas déjà été envoyer pour cette note
                 if id not in notes:
                     self.notify(grade.subject.name + ' : ' + f'{grade.grade}/{grade.out_of}', 'Tu as eu ' + f'{grade.grade}/{grade.out_of}' +
-                           ' en ' + grade.subject.name + ' sur ' + grade.comment + '\nMoyenne générale : ' + period.overall_average)
+                                ' en ' + grade.subject.name + ' sur ' + grade.comment + '\nMoyenne générale : ' + period.overall_average)
                     notes.append(id)
             self.line.notes = json.dumps(notes)
             session.commit()
