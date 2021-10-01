@@ -1,6 +1,6 @@
 import pronotepy
 from apiclient.discovery import build
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 from PIL.ImageColor import getrgb
 from skimage import color as cl
 from math import sqrt
@@ -53,12 +53,12 @@ class PronoteBot:
                                        password=self.mdpPronote,
                                        ent=self.ent)
         self.sched()
-        scheduler = BackgroundScheduler()
+        scheduler = BlockingScheduler()
         scheduler.add_job(self.coursToAgenda, 'cron',
                           day_of_week='sun', hour='17', minute='00')
         scheduler.add_job(self.sched, 'interval', minutes=30)
-        scheduler.start()
         print("I'm working")
+        scheduler.start()
 
     def sched(self):
         self.client.session_check()
@@ -256,7 +256,7 @@ class PronoteBot:
                     str(grade.date.day) + str(grade.date.month)
                 # verifie si une notification n'a pas déjà été envoyer pour cette note
                 if id not in notes:
-                    self.notify(f'{grade.subject.name} : {str(grade.grade)}/{str(grade.out_of)}', f'Tu as eu {str(grade.grade)} / {str(grade.out_of)} en {grade.subject.name} sur {grade.comment}\nMoyenne générale: {period.overall_average})
+                    self.notify(f'{grade.subject.name} : {str(grade.grade)}/{str(grade.out_of)}', f'Tu as eu {str(grade.grade)} / {str(grade.out_of)} en {grade.subject.name} sur {grade.comment}\nMoyenne générale: {period.overall_average}')
                     notes.append(id)
             self.line.notes = json.dumps(notes)
             session.commit()

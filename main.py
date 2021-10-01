@@ -22,9 +22,3 @@ if __name__ == "__main__":
         os.environ.get('NAME_MICROSOFT_TODO_LIST')
     )
     bot.run()
-    # permet de garder l'application ouverte en permanence
-    try:
-        while True:
-            time.sleep(2)
-    except (KeyboardInterrupt, SystemExit):
-        scheduler.shutdown()
