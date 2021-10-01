@@ -256,8 +256,7 @@ class PronoteBot:
                     str(grade.date.day) + str(grade.date.month)
                 # verifie si une notification n'a pas déjà été envoyer pour cette note
                 if id not in notes:
-                    self.notify(grade.subject.name + ' : ' + f'{grade.grade}/{grade.out_of}', 'Tu as eu ' + f'{grade.grade}/{grade.out_of}' +
-                                ' en ' + grade.subject.name + ' sur ' + grade.comment + '\nMoyenne générale : ' + period.overall_average)
+                    self.notify(f'{grade.subject.name} : {str(grade.grade)}/{str(grade.out_of)}', f'Tu as eu {str(grade.grade)} / {str(grade.out_of)} en {grade.subject.name} sur {grade.comment}\nMoyenne générale: {period.overall_average})
                     notes.append(id)
             self.line.notes = json.dumps(notes)
             session.commit()
