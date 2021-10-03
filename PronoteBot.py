@@ -2,7 +2,7 @@ import pronotepy
 from apiclient.discovery import build
 from apscheduler.schedulers.blocking import BlockingScheduler
 from PIL.ImageColor import getrgb
-from skimage import color as cl
+from Lab import RGBtoLab
 from math import sqrt
 from config import session, Config
 from ENTs import ents
@@ -92,7 +92,7 @@ class PronoteBot:
 
     @staticmethod
     def convertColor(color):
-        color = cl.rgb2lab(getrgb(color))
+        color = RGBtoLab(getrgb(color))
         colorIds = {
             '#7986cb': 1,
             '#33b679': 2,
@@ -108,7 +108,7 @@ class PronoteBot:
         }
         distances = []
         for colorId, id in colorIds.items():
-            colorIdLab = cl.rgb2lab(getrgb(colorId))
+            colorIdLab = RGBtoLab(getrgb(colorId))
             distances.append((sqrt((color[0] - colorIdLab[0])**2 + (
                 color[1] - colorIdLab[1]) ** 2 + (color[2] - colorIdLab[2])**2), id))
         return min(distances)[1]

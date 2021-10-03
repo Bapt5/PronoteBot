@@ -9,3 +9,4 @@ psycopg2
 scikit-image
 Pillow
 python-dotenv
+numpy
