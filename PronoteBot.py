@@ -249,15 +249,15 @@ class PronoteBot:
             notes = []
         if self.client.logged_in and self.tokenPushBullet:
             # récupère les notes
-            period = self.client.current_period
-            for grade in period.grades:
-                id = grade.grade + \
-                    grade.subject.name[0:3] + grade.comment[0:4] + \
-                    str(grade.date.day) + str(grade.date.month)
-                # verifie si une notification n'a pas déjà été envoyer pour cette note
-                if id not in notes:
-                    self.notify(f'{grade.subject.name} : {str(grade.grade)}/{str(grade.out_of)}', f'Tu as eu {str(grade.grade)} / {str(grade.out_of)} en {grade.subject.name} sur {grade.comment}\nMoyenne générale: {period.overall_average}')
-                    notes.append(id)
+            for period in self.client.periods:
+                for grade in period.grades:
+                    id = grade.grade + \
+                        grade.subject.name[0:3] + grade.comment[0:4] + \
+                        str(grade.date.day) + str(grade.date.month)
+                    # verifie si une notification n'a pas déjà été envoyer pour cette note
+                    if id not in notes:
+                        self.notify(f'{grade.subject.name} : {str(grade.grade)}/{str(grade.out_of)}', f'Tu as eu {str(grade.grade)} / {str(grade.out_of)} en {grade.subject.name} sur {grade.comment}\nMoyenne générale: {period.overall_average}')
+                        notes.append(id)
             self.line.notes = json.dumps(notes)
             session.commit()
 
